@@ -41,6 +41,17 @@
         console.log("GET chrome.storage.sync = "+JSON.stringify(value));
         callback(value);
       });
+    } else if (typeof localStorage != "undefined") {
+      var data = {};
+      var json = localStorage.getItem("CONFIG");
+      if (json) {
+        try {
+          data = JSON.parse(json);
+        } catch (e) {
+          console.log("Got ", e, " while reading info");
+        }
+      }
+      callback(data);
     } else if (typeof document != "undefined") {
       var data = {};
       var cookie = document.cookie;
@@ -64,6 +75,8 @@
     if (typeof chrome !== 'undefined' && chrome.storage) {
       console.log("SET chrome.storage.sync = "+JSON.stringify(data));
       chrome.storage.sync.set({ CONFIGS : data });    
+    } else if (typeof localStorage != "undefined") {
+      localStorage.setItem("CONFIG", JSON.stringify(data));
     } else if (typeof document != "undefined") {
       document.cookie = "CONFIG="+btoa(JSON.stringify(data));
     }
